@@ -1,0 +1,7 @@
+.env
+.env.test
+yarn-error.log
+yarn.lock
+package-lock.json
+
+node_modules/
