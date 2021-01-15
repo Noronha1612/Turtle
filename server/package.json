@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "tsnd --ignore-watch node_modules --ignore __tests__ src/server.ts",
+    "start": "ts-node src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,8 @@
     "pg": "^8.5.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.9",
+    "@types/express": "^4.17.11",
     "@types/jest": "^26.0.20",
     "jest": "^26.6.3",
     "ts-jest": "^26.4.4",
