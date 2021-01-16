@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "dev": "tsnd --ignore-watch node_modules --ignore __tests__ src/server.ts",
-    "start": "ts-node src/server.ts"
+    "start": "ts-node src/server.ts",
+    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
+    "knex:rollback": "knex --knexfile knexfile.ts migrate:rollback"
   },
   "keywords": [],
   "author": "",
