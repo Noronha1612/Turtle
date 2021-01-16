@@ -1,17 +1,37 @@
-import { config } from 'dotenv';
 import path from 'path';
 
-config({
-    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
-});
-
 export default {
-  client: "postgresql",
-  connection: process.env.DB_URL,
-  migrations: {
-    directory: path.resolve(__dirname, 'src', 'database', 'migrations')
+  test: {
+    client: 'sqlite3',
+    connection: {
+      filename: path.resolve(__dirname, '__tests__', 'database', 'database.sqlite')
+    },
+    migrations: {
+      directory: path.resolve(__dirname, 'src', 'database', 'migrations')
+    }
   },
-  seeds: {
-    directory: path.resolve(__dirname, 'src', 'database', 'seeds')
+
+  development: {
+    client: 'postgresql',
+    connection: process.env.DB_URL,
+    migrations: {
+      directory: path.resolve(__dirname, 'src', 'database', 'migrations')
+    }
+  },
+
+  production: {
+    client: 'postgresql',
+    connection: {
+      database: 'my_db',
+      user:     'username',
+      password: 'password'
+    },
+    pool: {
+      min: 2,
+      max: 10
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    }
   }
 };
