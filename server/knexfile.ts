@@ -4,11 +4,12 @@ export default {
   test: {
     client: 'sqlite3',
     connection: {
-      filename: path.resolve(__dirname, '__tests__', 'database', 'database.sqlite')
+      filename: path.resolve(__dirname, '__tests__', 'database.sqlite')
     },
     migrations: {
       directory: path.resolve(__dirname, 'src', 'database', 'migrations')
-    }
+    },
+    useNullAsDefault: true
   },
 
   development: {
