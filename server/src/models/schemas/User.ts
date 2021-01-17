@@ -10,26 +10,14 @@ export default class User {
         this.id = id;
     }
 
-    async setBody(data?: UserRegister) {
+    async setBody(ableToInsert = true, data?: UserRegister) {
         const {data: userSearched} = await UserManager.findById(this.getId());
 
         if ( userSearched ) this.body = userSearched;
-        else if ( data ) {
+        else if ( data && ableToInsert ) {
             await UserManager.insertIntoDB({ ...data, user_id: this.getId() });
-            this.setBody();
+            await this.setBody();
         }
-    }
-
-    async createSessionToken() {
-        if ( !this.body ) throw 'User has no body yet';
-
-        const token = generateToken({
-            user_id: this.id,
-            email: this.getBody()?.email,
-            exp: Date.now() + 1000 * 60 * 60 * 24
-        });
-        
-        return token;
     }
 
     public getId(): string {
