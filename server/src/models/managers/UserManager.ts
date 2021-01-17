@@ -1,6 +1,7 @@
 import ResponseCodes from "../../interfaces/responseCodes";
 import { UserGeneric, UserRegister } from "../../interfaces/UserInterface";
 import { encryptItem } from "../../utils/encryptItem";
+import generateToken from "../../utils/generateToken";
 import UserRepository, { UserRepositoryResponse } from '../repositories/UserRepository';
 import User from "../schemas/User";
 
@@ -12,10 +13,10 @@ export default class UserManager {
     static async findById(id: string): Promise<UserManagerResponse<UserGeneric | undefined>> {
         const response = await UserRepository.getUserById(id);
 
-        return { ...response, code: 200 };
+        return { ...response, code: response.data ? ResponseCodes.OK : ResponseCodes.NOT_FOUND };
     } 
 
-    static async insertIntoDB(data: UserRegister): Promise<UserManagerResponse<undefined>> {
+    static async insertIntoDB(data: UserRegister) {
         // Validations
 
         const filteredData = {
@@ -25,7 +26,9 @@ export default class UserManager {
 
         const response = await UserRepository.insertUser(filteredData);
 
-        return { ...response, code: 200 };
+        if ( response.error ) return { ...response, code: ResponseCodes.BAD_REQUEST }
+
+        return { ...response, code: ResponseCodes.CREATED };
     }
 
     static async createSession(email: string, password: string): Promise<UserManagerResponse<string | undefined>> {
@@ -40,12 +43,13 @@ export default class UserManager {
                 if ( userPassword !== encryptItem(password).item ) return { error: true, code: ResponseCodes.UNAUTHORIZED }
             }
 
-            const user = new User(searchedUserBody.user_id);
-            await user.setBody();
+            const token = generateToken({
+                user_id: searchedUserBody.user_id,
+                email: searchedUserBody.email,
+                exp: Date.now() + 1000 * 60 * 60 * 24
+            });
 
-            const token = await user.createSessionToken();
-
-            return { error: false, code: ResponseCodes.OK, data: token };
+            return { error: false, code: ResponseCodes.CREATED, data: token };
         } catch(err) {
             console.log(err);
             return { error: true, code: ResponseCodes.INTERNAL_SERVER_ERROR }
