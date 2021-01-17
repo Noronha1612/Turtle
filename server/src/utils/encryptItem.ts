@@ -1,9 +1,12 @@
 import crypto from 'crypto';
+import { config } from 'dotenv';
+
+config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
 export function encryptItem(item: string) {
     const cryptoKey = process.env.CRYPTO_KEY;
     const cryptoIv = process.env.CRYPTO_IV;
-    if ( !cryptoKey || !cryptoIv ) return { error: true, message: 'Some key not found' };
+    if ( !cryptoKey || !cryptoIv ) throw 'Some key not found';
 
     const formatedKey = crypto.scryptSync(cryptoKey, 'salt', 32);
 

@@ -2,13 +2,10 @@ import db from '../../src/database/connection';
 import app from '../../src/app';
 import request from 'supertest';
 import createUser from '../utils/createUser';
-import { config } from 'dotenv';
 import ResponseCodes from '../../src/interfaces/responseCodes';
 import UserRepository from '../../src/models/repositories/UserRepository';
 
-config();
-
-describe('users', () => {
+describe('session', () => {
     beforeEach(async () => {
         await db.migrate.latest();
     });
@@ -16,7 +13,6 @@ describe('users', () => {
     afterEach(async () => {
         await db.migrate.rollback();
     });
-
 
 
     it('should authenticate with valid data', async () => {
@@ -33,7 +29,7 @@ describe('users', () => {
                 password: '306090120'
             });
 
-        expect(response.status).toBe(ResponseCodes.OK);
+        expect(response.status).toBe(ResponseCodes.CREATED);
         expect(response.body.token).not.toBeUndefined();
     });
 

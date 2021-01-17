@@ -20,9 +20,12 @@ export default async function createUser(data = {}) {
         password: faker.internet.password(),
         city: faker.address.city(),
         birthday: formatDate(faker.date.past()),
-        avatar_id: faker.random.number({ min: 0, max: 12 })
+        avatar_id: faker.random.number({ min: 0, max: 12 }),
+        ...data
     }
 
     const user = new User(dataFake.user_id);
-    await user.setBody({...dataFake, ...data});
+    await user.setBody(true, dataFake);
+
+    return user;
 }
