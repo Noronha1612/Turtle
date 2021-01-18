@@ -1,4 +1,9 @@
 import path from 'path';
+import { config } from 'dotenv';
+
+config({
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
+});
 
 export default {
   test: {
@@ -13,7 +18,7 @@ export default {
   },
 
   development: {
-    client: 'postgresql',
+    client: 'postgres',
     connection: process.env.DB_URL,
     migrations: {
       directory: path.resolve(__dirname, 'src', 'database', 'migrations')

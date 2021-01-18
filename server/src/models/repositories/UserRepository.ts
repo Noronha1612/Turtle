@@ -16,7 +16,7 @@ export default class UserRepository {
     static async getUserById(id: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
-            .select(['name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
+            .select(['user_id', 'name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
             .where({ user_id: id })
             .first<UserGeneric | undefined>();
 

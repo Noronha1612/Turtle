@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "test_knex:migrate": "cross-env NODE_ENV=test knex --knexfile knexfile.ts migrate:latest",
     "dev": "tsnd --ignore-watch node_modules --ignore __tests__ src/server.ts",
     "start": "ts-node src/server.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
@@ -29,6 +30,7 @@
     "@types/jest": "^26.0.20",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/supertest": "^2.0.10",
+    "cross-env": "^7.0.3",
     "faker": "^5.1.0",
     "jest": "^26.6.3",
     "sqlite3": "4.1.1",

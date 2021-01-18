@@ -4,16 +4,28 @@ import request from 'supertest';
 import createUser from '../utils/createUser';
 import ResponseCodes from '../../src/interfaces/responseCodes';
 import UserRepository from '../../src/models/repositories/UserRepository';
+import truncate from '../utils/truncate';
 
 describe('session', () => {
-    beforeEach(async () => {
+
+    beforeAll(async () => {
+        await db.migrate.rollback();
         await db.migrate.latest();
     });
 
+    beforeEach(async () => {
+        await truncate();
+    });
+
     afterEach(async () => {
+        await truncate();
+    });
+    
+    afterAll(async () => {
         await db.migrate.rollback();
     });
 
+    
 
     it('should authenticate with valid data', async () => {
         await createUser({

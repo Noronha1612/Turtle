@@ -1,16 +1,15 @@
 import db from '../../src/database/connection';
 import User from '../../src/models/schemas/User';
 import createUser from '../utils/createUser';
+import truncate from '../utils/truncate';
 
 describe('users', () => {
 
     beforeEach(async () => {
-        await db.migrate.latest();
+        await truncate();
     });
 
-    afterEach(async () => {
-        await db.migrate.rollback();
-    });
+
 
     it('should setBody if user_id is registered in DB', async () => {
         await createUser({user_id: 'noronha123'});
@@ -23,6 +22,8 @@ describe('users', () => {
         expect(user.getBody()?.name).not.toBeUndefined();
     });
 
+
+
     it('should not setBody if user_id is not registered in DB', async () => {
         const user = new User('noronha123');
 
@@ -34,6 +35,8 @@ describe('users', () => {
             expect(err).not.toBeUndefined();
         }
     });
+
+
 
     it('should setBody if data is valid', async () => {
         const user = new User('noronha123');
