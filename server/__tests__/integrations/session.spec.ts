@@ -8,21 +8,12 @@ import truncate from '../utils/truncate';
 
 describe('session', () => {
 
-    beforeAll(async () => {
-        await db.migrate.rollback();
-        await db.migrate.latest();
-    });
-
     beforeEach(async () => {
         await truncate();
     });
 
     afterEach(async () => {
         await truncate();
-    });
-    
-    afterAll(async () => {
-        await db.migrate.rollback();
     });
 
     
@@ -43,6 +34,7 @@ describe('session', () => {
 
         expect(response.status).toBe(ResponseCodes.CREATED);
         expect(response.body.token).not.toBeUndefined();
+        expect(response.body.token).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/);
     });
 
 

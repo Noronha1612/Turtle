@@ -9,7 +9,11 @@ describe('users', () => {
         await truncate();
     });
 
+    afterEach(async () => {
+        await truncate();
+    });
 
+    
 
     it('should setBody if user_id is registered in DB', async () => {
         await createUser({user_id: 'noronha123'});
