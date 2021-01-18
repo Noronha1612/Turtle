@@ -112,5 +112,27 @@ describe('user_manager', () => {
         expect(sessionResponse.data).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/);
         expect(sessionResponse.code).toBe(ResponseCodes.CREATED);
         expect(sessionResponse.error).toBe(false);
-    })
+    });
+
+
+
+    it('should not create a session if email does not match', async () => {
+        await createUser({ email: 'teste2@gmail.com', password: '306090120' });
+
+        const sessionResponse = await UserManager.createSession('teste@gmail.com', '306090120');
+
+        expect(sessionResponse.code).toBe(ResponseCodes.NOT_FOUND);
+        expect(sessionResponse.error).toBe(true);
+    });
+
+
+
+    it('should not create a session if password does not match', async () => {
+        await createUser({ email: 'teste@gmail.com', password: 'senhaIncorreta' });
+
+        const sessionResponse = await UserManager.createSession('teste@gmail.com', '306090120');
+
+        expect(sessionResponse.code).toBe(ResponseCodes.UNAUTHORIZED);
+        expect(sessionResponse.error).toBe(true);
+    });
 });
