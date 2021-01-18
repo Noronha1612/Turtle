@@ -16,3 +16,5 @@ export function encryptItem(item: string) {
 
     return {error: false, item: encryptedItem.toString('hex')};
 }
+
+

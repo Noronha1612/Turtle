@@ -16,9 +16,11 @@ export default class UserRepository {
     static async getUserById(id: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
-            .select(['user_id', 'name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
-            .where({ user_id: id })
-            .first<UserGeneric | undefined>();
+                .select(['user_id', 'name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
+                .where({ user_id: id })
+                .first<UserGeneric | undefined>();
+
+            if ( !response ) return { error: true };
 
             return { error: false, data: response };
         } catch(err) {
@@ -30,9 +32,11 @@ export default class UserRepository {
     static async getUserByEmail(email:string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
-            .select(['user_id', 'name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
-            .where({ email })
-            .first<UserGeneric | undefined>();
+                .select(['user_id', 'name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
+                .where({ email })
+                .first<UserGeneric | undefined>();
+
+            if ( !response ) return { error: true };
 
             return { error: false, data: response };
         } catch(err) {
