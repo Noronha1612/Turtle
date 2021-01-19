@@ -110,8 +110,6 @@ describe('user_manager', () => {
     it('should not insert into DB if email already exist', async () => {
         await createUser({ email: 'teste@gmail.com' });
 
-        const indexResponse = await UserRepository.indexAllUsers();
-
         const createResponse = await UserManager.insertIntoDB({
             avatar_id: 2,
             birthday: '16/12/2002',
