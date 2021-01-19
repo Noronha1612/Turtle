@@ -51,6 +51,7 @@ describe('user_manager', () => {
             email: 'teste@gmail.com',
             name: 'Noronha',
             password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
             whatsapp: '81982472813'
         });
@@ -58,6 +59,27 @@ describe('user_manager', () => {
         expect(createResponse.code).toBe(ResponseCodes.CREATED);
         expect(createResponse.data).toBeUndefined();
         expect(createResponse.error).toBe(false);
+    });
+
+
+
+    it('should not insert into DB if password and confirm_password do not match', async () => {
+        const createResponse = await UserManager.insertIntoDB({
+            avatar_id: 2,
+            birthday: '16/12/2002',
+            city: 'Recife',
+            email: 'teste@gmail.com',
+            name: 'Noronha',
+            password: 'senhaSecreta',
+            confirm_password: 'senhaSecret',
+            user_id: 'noronha123',
+            whatsapp: '81982472813'
+        });
+
+        expect(createResponse.error).toBe(true);
+        expect(createResponse.code).toBe(ResponseCodes.BAD_REQUEST);
+        expect(createResponse.message).toBe('Password and confirm password do not match');
+        expect(createResponse.data).toBeUndefined();
     });
 
     
@@ -72,12 +94,14 @@ describe('user_manager', () => {
             email: 'teste@gmail.com',
             name: 'Noronha',
             password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
             whatsapp: '81982472813'
         });
 
         expect(createResponse.error).toBe(true);
         expect(createResponse.code).toBe(ResponseCodes.FORBIDDEN);
+        expect(createResponse.message).toBe('UserID already exist');
         expect(createResponse.data).toBeUndefined();
     });
 
@@ -86,6 +110,8 @@ describe('user_manager', () => {
     it('should not insert into DB if email already exist', async () => {
         await createUser({ email: 'teste@gmail.com' });
 
+        const indexResponse = await UserRepository.indexAllUsers();
+
         const createResponse = await UserManager.insertIntoDB({
             avatar_id: 2,
             birthday: '16/12/2002',
@@ -93,19 +119,120 @@ describe('user_manager', () => {
             email: 'teste@gmail.com',
             name: 'Noronha',
             password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
             whatsapp: '81982472813'
         });
 
         expect(createResponse.error).toBe(true);
         expect(createResponse.code).toBe(ResponseCodes.FORBIDDEN);
+        expect(createResponse.message).toBe('Email already exist');
         expect(createResponse.data).toBeUndefined();
     });
 
 
 
+    it('should not insert into DB if birthday is after the local "now"', async () => {
+        const formatDate = (date: Date) => {
+            const day = date.getDate();
+            const month = date.getMonth();
+            const year = date.getFullYear();
+    
+            return `${day}/${month}/${year}`
+        }
+
+        const createResponse = await UserManager.insertIntoDB({
+            avatar_id: 2,
+            birthday: formatDate(new Date(Date.now() + 100000000)),
+            city: 'Recife',
+            email: 'teste@gmail.com',
+            name: 'Noronha',
+            password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
+            user_id: 'noronha123',
+            whatsapp: '81982472813'
+        });
+
+        expect(createResponse.error).toBe(true);
+        expect(createResponse.code).toBe(ResponseCodes.BAD_REQUEST);
+        expect(createResponse.message).toBe('Invalid date');
+        expect(createResponse.data).toBeUndefined();
+    });
+
+
+
+    it('should not insert into DB if email is invalid', async () => {
+        const responses = [];
+
+        responses.push(await UserManager.insertIntoDB({
+            avatar_id: 2,
+            birthday: '16/12/2002',
+            city: 'Recife',
+            email: 'teste',
+            name: 'Noronha',
+            password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
+            user_id: 'noronha123',
+            whatsapp: '81982472813'
+        }));
+
+        responses.push(await UserManager.insertIntoDB({
+            avatar_id: 2,
+            birthday: '16/12/2002',
+            city: 'Recife',
+            email: 'teste@gmail',
+            name: 'Noronha',
+            password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
+            user_id: 'noronha123',
+            whatsapp: '81982472813'
+        }));
+
+        responses.push(await UserManager.insertIntoDB({
+            avatar_id: 2,
+            birthday: '16/12/2002',
+            city: 'Recife',
+            email: '@gmail.com',
+            name: 'Noronha',
+            password: 'senhaSecreta',
+            confirm_password: 'senhaSecreta',
+            user_id: 'noronha123',
+            whatsapp: '81982472813'
+        }));
+
+        responses.forEach(createResponse => {
+            expect(createResponse.error).toBe(true);
+            expect(createResponse.code).toBe(ResponseCodes.BAD_REQUEST);
+            expect(createResponse.message).toBe('Invalid email');
+            expect(createResponse.data).toBeUndefined();
+        });        
+    });
+
+
+
+    it('should not insert into DB if password is too short', async () => {
+        const createResponse = await UserManager.insertIntoDB({
+            avatar_id: 2,
+            birthday: '16/12/2002',
+            city: 'Recife',
+            email: 'teste@gmail.com',
+            name: 'Noronha',
+            password: 'senha',
+            confirm_password: 'senha',
+            user_id: 'noronha123',
+            whatsapp: '81982472813'
+        });
+
+        expect(createResponse.error).toBe(true);
+        expect(createResponse.code).toBe(ResponseCodes.BAD_REQUEST);
+        expect(createResponse.message).toBe('Password too short');
+        expect(createResponse.data).toBeUndefined();
+    })
+
+
+
     it('should create a session if valid data', async () => {
-        await createUser({ email: 'teste@gmail.com', password: '306090120' });
+        await createUser({ email: 'teste@gmail.com', password: '306090120', confirm_password: '306090120' });
 
         const sessionResponse = await UserManager.createSession('teste@gmail.com', '306090120');
 
@@ -122,17 +249,23 @@ describe('user_manager', () => {
         const sessionResponse = await UserManager.createSession('teste@gmail.com', '306090120');
 
         expect(sessionResponse.code).toBe(ResponseCodes.NOT_FOUND);
+        expect(sessionResponse.message).toBe('Email not found');
         expect(sessionResponse.error).toBe(true);
     });
 
 
 
     it('should not create a session if password does not match', async () => {
-        await createUser({ email: 'teste@gmail.com', password: 'senhaIncorreta' });
+        await createUser({ email: 'teste@gmail.com', password: 'senhaIncorreta', confirm_password: 'senhaIncorreta' });
 
         const sessionResponse = await UserManager.createSession('teste@gmail.com', '306090120');
 
         expect(sessionResponse.code).toBe(ResponseCodes.UNAUTHORIZED);
+        expect(sessionResponse.message).toBe('Password does not match');
         expect(sessionResponse.error).toBe(true);
     });
+
+
+
+
 });

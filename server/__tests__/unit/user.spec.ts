@@ -52,6 +52,7 @@ describe('users', () => {
             email: 'inc.691@gmail.com',
             name: 'Noronha',
             password: '306090120',
+            confirm_password: '306090120',
             whatsapp: '81983167399'
         });
 

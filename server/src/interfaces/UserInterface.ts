@@ -1,5 +1,6 @@
 export interface UserRegister extends UserGeneric {
     password: string;
+    confirm_password: string;
 }
 
 export interface UserGeneric {

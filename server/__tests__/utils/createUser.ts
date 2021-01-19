@@ -12,12 +12,15 @@ export default async function createUser(data = {}) {
         return `${day}/${month}/${year}`
     }
 
+    const password = faker.internet.password();
+
     const dataFake = {
         user_id: faker.internet.userName(),
         name: faker.name.findName(),
         email: faker.internet.email(),
         whatsapp: faker.phone.phoneNumber(),
-        password: faker.internet.password(),
+        password: password,
+        confirm_password: password,
         city: faker.address.city(),
         birthday: formatDate(faker.date.past()),
         avatar_id: faker.random.number({ min: 0, max: 12 }),
