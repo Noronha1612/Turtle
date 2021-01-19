@@ -62,8 +62,19 @@ export default class UserRepository {
 
     static async insertUser(data: UserRegister): Promise<UserRepositoryResponse<undefined>> {
         try {
+            const filteredData = {
+                name: data.name,
+                user_id: data.user_id,
+                email: data.email,
+                whatsapp: data.whatsapp,
+                city: data.city,
+                birthday: data.birthday,
+                avatar_id: data.avatar_id,
+                password: data.password
+            };
+
             await db('users')
-                .insert(data);
+                .insert(filteredData);
 
             return { error: false };
         } catch(err) {
