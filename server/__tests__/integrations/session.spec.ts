@@ -22,7 +22,8 @@ describe('session', () => {
         await createUser({
             user_id: 'g_noronhe-se',
             email: 'inc.691@gmail.com',
-            password: '306090120'
+            password: '306090120',
+            confirm_password: '306090120'
         });
 
         const response = await request(app)
@@ -43,7 +44,8 @@ describe('session', () => {
         await createUser({
             user_id: 'g_noronhe-se',
             email: 'inc.691@gmail.com',
-            password: '30609012'
+            password: '30609012',
+            confirm_password: '306090120'
         });
 
         const response = await request(app)
@@ -63,7 +65,8 @@ describe('session', () => {
         await createUser({
             user_id: 'g_noronhe-se',
             email: 'inc.691@gmail.com',
-            password: '30609012'
+            password: '30609012',
+            confirm_password: '30609012'
         });
 
         const response = await request(app)
