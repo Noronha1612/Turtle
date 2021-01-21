@@ -16,7 +16,8 @@ export default async function createUser(data = {}) {
 
     const dataFake = {
         user_id: faker.internet.userName(),
-        name: faker.name.findName(),
+        first_name: faker.name.firstName(),
+        last_name: faker.name.lastName(),
         email: faker.internet.email(),
         whatsapp: faker.phone.phoneNumber(),
         password: password,

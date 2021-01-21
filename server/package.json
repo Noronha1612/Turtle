@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "test_knex:migrate": "cross-env NODE_ENV=test knex --knexfile knexfile.ts migrate:latest",
     "dev": "tsnd --ignore-watch node_modules --ignore __tests__ src/server.ts",
     "start": "ts-node src/server.ts",

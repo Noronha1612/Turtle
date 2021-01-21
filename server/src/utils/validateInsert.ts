@@ -1,9 +1,8 @@
 import ResponseCodes from "../interfaces/responseCodes";
 import { UserRegister } from "../interfaces/UserInterface";
-import UserManager, { UserManagerResponse } from "../models/managers/UserManager";
-import UserRepository from "../models/repositories/UserRepository";
+import UserRepository, { UserRepositoryResponse } from "../models/repositories/UserRepository";
 
-export default async function validateInsert(data: UserRegister): Promise<UserManagerResponse<undefined>> {
+export default async function validateInsert(data: UserRegister): Promise<UserRepositoryResponse<undefined>> {
 
     // Check if user with ID given is already registered
     const searchedUserById = await UserRepository.getUserById(data.user_id);
@@ -30,4 +29,4 @@ export default async function validateInsert(data: UserRegister): Promise<UserMa
     if ( data.password.length < 6 ) return { error: true, message: 'Password too short', code: ResponseCodes.BAD_REQUEST };
 
     return { error: false, code: ResponseCodes.ACCEPTED }
-};
+}

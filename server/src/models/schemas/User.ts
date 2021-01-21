@@ -1,6 +1,5 @@
 import { UserGeneric, UserRegister } from '../../interfaces/UserInterface';
-import generateToken from '../../utils/generateToken';
-import UserManager, { UserManagerResponse } from '../managers/UserManager';
+import UserManager from '../managers/UserManager';
 
 export default class User {
     private id: string;

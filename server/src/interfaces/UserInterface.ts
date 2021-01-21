@@ -5,7 +5,8 @@ export interface UserRegister extends UserGeneric {
 
 export interface UserGeneric {
     user_id: string;
-    name: string;
+    first_name: string;
+    last_name: string;
     email: string;
     whatsapp: string;
     city: string;

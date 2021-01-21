@@ -5,25 +5,20 @@ import generateToken from "../../utils/generateToken";
 import validateInsert from "../../utils/validateInsert";
 import UserRepository, { UserRepositoryResponse } from '../repositories/UserRepository';
 
-export interface UserManagerResponse<T> extends UserRepositoryResponse<T> {
-    code: ResponseCodes;
-    message?: string;
-}
-
 export default class UserManager {
-    static async findById(id: string): Promise<UserManagerResponse<UserGeneric | undefined>> {
+    static async findById(id: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         const response = await UserRepository.getUserById(id);
 
-        return { ...response, code: response.data ? ResponseCodes.OK : ResponseCodes.NOT_FOUND };
+        return response;
     } 
 
-    static async findByEmail(email: string): Promise<UserManagerResponse<UserGeneric | undefined>> {
+    static async findByEmail(email: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         const response = await UserRepository.getUserByEmail(email);
 
-        return { ...response, code: response.data ? ResponseCodes.OK : ResponseCodes.NOT_FOUND };
+        return response;
     } 
 
-    static async insertIntoDB(data: UserRegister): Promise<UserManagerResponse<undefined>> {
+    static async insertIntoDB(data: UserRegister): Promise<UserRepositoryResponse<undefined>> {
         const filteredData = {
             ...data,
             password: encryptItem(data.password).item as string,
@@ -39,7 +34,7 @@ export default class UserManager {
         return { ...response, code: ResponseCodes.CREATED };
     }
 
-    static async createSession(email: string, password: string): Promise<UserManagerResponse<string | undefined>> {
+    static async createSession(email: string, password: string): Promise<UserRepositoryResponse<string | undefined>> {
         // Validations
         try {
             const {data: searchedUserBody} = await UserRepository.getUserByEmail(email);
