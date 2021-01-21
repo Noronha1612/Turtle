@@ -10,5 +10,6 @@ const routes = Router();
 // Routes
 
 routes.post('/session', userController.createSession);
+routes.post('/users', userController.createUser);
 
 export default routes;
