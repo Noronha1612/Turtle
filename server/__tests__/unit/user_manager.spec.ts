@@ -49,7 +49,8 @@ describe('user_manager', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'teste@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
@@ -69,7 +70,8 @@ describe('user_manager', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'teste@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecret',
             user_id: 'noronha123',
@@ -88,14 +90,15 @@ describe('user_manager', () => {
         await createUser({ user_id: 'noronha123' });
 
         const createResponse = await UserManager.insertIntoDB({
+            user_id: 'noronha123',
             avatar_id: 2,
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'teste@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
-            user_id: 'noronha123',
             whatsapp: '81982472813'
         });
 
@@ -112,10 +115,11 @@ describe('user_manager', () => {
 
         const createResponse = await UserManager.insertIntoDB({
             avatar_id: 2,
+            email: 'teste@gmail.com',
             birthday: '16/12/2002',
             city: 'Recife',
-            email: 'teste@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
@@ -144,7 +148,8 @@ describe('user_manager', () => {
             birthday: formatDate(new Date(Date.now() + 100000000)),
             city: 'Recife',
             email: 'teste@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
@@ -167,7 +172,8 @@ describe('user_manager', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'teste',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
@@ -179,7 +185,8 @@ describe('user_manager', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'teste@gmail',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
@@ -191,7 +198,8 @@ describe('user_manager', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: '@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senhaSecreta',
             confirm_password: 'senhaSecreta',
             user_id: 'noronha123',
@@ -214,7 +222,8 @@ describe('user_manager', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'teste@gmail.com',
-            name: 'Noronha',
+            first_name: 'Noronha',
+            last_name: 'Cavalcante',
             password: 'senha',
             confirm_password: 'senha',
             user_id: 'noronha123',
@@ -242,7 +251,7 @@ describe('user_manager', () => {
 
 
     it('should not create a session if email does not match', async () => {
-        await createUser({ email: 'teste2@gmail.com', password: '306090120' });
+        await createUser({ email: 'teste2@gmail.com', password: '306090120', confirm_password: '306090120' });
 
         const sessionResponse = await UserManager.createSession('teste@gmail.com', '306090120');
 
@@ -265,5 +274,24 @@ describe('user_manager', () => {
 
 
 
+    it('should find an user by email if email exist', async () => {
+        await createUser({ first_name: 'Noronha', email: 'teste@email.com' });
 
+        const findResponse = await UserManager.findByEmail('teste@email.com');
+
+        expect(findResponse.data?.first_name).toBe('Noronha');
+        expect(findResponse.data?.email).toBe('teste@email.com');
+        expect(findResponse.code).toBe(ResponseCodes.OK);
+        expect(findResponse.error).toBe(false);
+    });
+
+
+
+    it('should not find an user by email if email is not registered', async () => {
+        const findResponse = await UserManager.findByEmail('teste@email.com');
+
+        expect(findResponse.message).toBe('Email not found');
+        expect(findResponse.code).toBe(ResponseCodes.NOT_FOUND);
+        expect(findResponse.error).toBe(true);
+    })
 });

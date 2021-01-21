@@ -1,4 +1,3 @@
-import db from '../../src/database/connection';
 import app from '../../src/app';
 import request from 'supertest';
 import createUser from '../utils/createUser';
@@ -31,11 +30,13 @@ describe('session', () => {
             .send({
                 email: 'inc.691@gmail.com',
                 password: '306090120'
-            });
+        });
 
-        expect(response.status).toBe(ResponseCodes.CREATED);
+        const tokenRegex = /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/;
+
         expect(response.body.token).not.toBeUndefined();
-        expect(response.body.token).toMatch(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/);
+        expect(response.body.token).toMatch(tokenRegex);
+        expect(response.status).toBe(ResponseCodes.CREATED);
     });
 
 
@@ -55,8 +56,8 @@ describe('session', () => {
                 password: '306090123'
             });
 
-        expect(response.status).toBe(ResponseCodes.NOT_FOUND);
         expect(response.body.token).toBeUndefined();
+        expect(response.status).toBe(ResponseCodes.NOT_FOUND);
     });
 
 
@@ -76,7 +77,7 @@ describe('session', () => {
                 password: '306090123'
             });
 
-        expect(response.status).toBe(ResponseCodes.UNAUTHORIZED);
         expect(response.body.token).toBeUndefined();
+        expect(response.status).toBe(ResponseCodes.UNAUTHORIZED);
     });
 });

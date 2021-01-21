@@ -23,7 +23,7 @@ describe('users', () => {
         await user.setBody();
 
         expect(user.getBody()).not.toBeUndefined();
-        expect(user.getBody()?.name).not.toBeUndefined();
+        expect(user.getBody()?.first_name).not.toBeUndefined();
     });
 
 
@@ -50,14 +50,15 @@ describe('users', () => {
             birthday: '16/12/2002',
             city: 'Recife',
             email: 'inc.691@gmail.com',
-            name: 'Noronha',
+            first_name: 'Gabriel',
+            last_name: 'Noronha',
             password: '306090120',
             confirm_password: '306090120',
             whatsapp: '81983167399'
         });
 
         expect(user.getBody()).not.toBeUndefined();
-        expect(user.getBody()?.name).not.toBeUndefined();
-        expect(user.getBody()?.name).toBe('Noronha');
+        expect(user.getBody()?.first_name).not.toBeUndefined();
+        expect(user.getBody()?.first_name).toBe('Gabriel');
     });
 })
