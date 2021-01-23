@@ -1,6 +1,8 @@
 import { UserGeneric, UserRegister } from '../../interfaces/UserInterface';
 import UserManager from '../managers/UserManager';
 
+const userManager = new UserManager();
+
 export default class User {
     private id: string;
     private body?: UserGeneric;
@@ -10,11 +12,11 @@ export default class User {
     }
 
     async setBody(ableToInsert = true, data?: UserRegister) {
-        const {data: userSearched} = await UserManager.findById(this.getId());
+        const {data: userSearched} = await userManager.findById(this.getId());
 
         if ( userSearched ) this.body = userSearched;
         else if ( data && ableToInsert ) {
-            await UserManager.insertIntoDB({ ...data, user_id: this.getId() });
+            await userManager.insertIntoDB({ ...data, user_id: this.getId() });
             await this.setBody();
         }
     }

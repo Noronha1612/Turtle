@@ -1,5 +1,4 @@
-import faker, { fake } from 'faker';
-import UserManager from '../../src/models/managers/UserManager';
+import faker from 'faker';
 import User from '../../src/models/schemas/User';
 
 export default async function createUser(data = {}) {

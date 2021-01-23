@@ -2,14 +2,15 @@ import { Request, Response } from 'express';
 import ResponseCodes from '../interfaces/responseCodes';
 import { UserRegister } from '../interfaces/UserInterface';
 import UserManager from '../models/managers/UserManager';
-import User from '../models/schemas/User';
+
+const userManager = new UserManager();
 
 export default class UserController {
     async createSession(request: Request, response: Response) {
         try {
             const { email, password } = request.body;
 
-            const {data: session, code, error} = await UserManager.createSession(email, password);
+            const {data: session, code, error} = await userManager.createSession(email, password);
 
             if ( !session ) return response.status(code).json({ error });
 
@@ -24,8 +25,10 @@ export default class UserController {
         try {
             const data = request.body as UserRegister;
 
-            const createResponse = await UserManager.insertIntoDB(data);
-            const { data: token } = await UserManager.createSession(data.email, data.password);
+            const createResponse = await userManager.insertIntoDB(data);
+            const { data: token } = await userManager.createSession(data.email, data.password);
+
+            if(createResponse.error) return response.status(createResponse.code).json({ error: createResponse.error, message: createResponse.message });
             
             return response.status(ResponseCodes.CREATED).json({ error: false, token });
         } catch(err) {

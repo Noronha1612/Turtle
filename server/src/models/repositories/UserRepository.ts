@@ -11,13 +11,13 @@ export interface UserRepositoryResponse<T> {
 }
 
 export default class UserRepository {
-    static async indexAllUsers() {
+    async indexAllUsers() {
         const response = await db('users').select('*');
 
         return response;
     }
 
-    static async getUserById(id: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
+    async getUserById(id: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
                 .select(['user_id', 'first_name', 'last_name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
@@ -33,7 +33,7 @@ export default class UserRepository {
         }
     }
 
-    static async getUserByEmail(email:string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
+    async getUserByEmail(email:string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
                 .select(['user_id', 'first_name', 'last_name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
@@ -49,7 +49,7 @@ export default class UserRepository {
         }
     }
 
-    static async getPasswordByEmail(email:string): Promise<UserRepositoryResponse<string | undefined>> {
+    async getPasswordByEmail(email:string): Promise<UserRepositoryResponse<string | undefined>> {
         try {
             const response = await db('users')
             .select('password')
@@ -65,7 +65,7 @@ export default class UserRepository {
         }
     }
 
-    static async insertUser(data: UserRegister): Promise<UserRepositoryResponse<undefined>> {
+    async insertUser(data: UserRegister): Promise<UserRepositoryResponse<undefined>> {
         try {
             const filteredData = {
                 first_name: data.first_name,
