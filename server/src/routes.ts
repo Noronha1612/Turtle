@@ -11,5 +11,6 @@ const routes = Router();
 
 routes.post('/session', userController.createSession);
 routes.post('/users', userController.createUser);
+routes.post('/recoverPassword', userController.recoverPassword);
 
 export default routes;

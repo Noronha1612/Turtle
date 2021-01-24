@@ -57,7 +57,16 @@ export default class UserManager {
             return { error: false, code: ResponseCodes.CREATED, data: token };
         } catch(err) {
             console.log(err);
-            return { error: true, code: ResponseCodes.INTERNAL_SERVER_ERROR }
+            return { error: true, code: ResponseCodes.INTERNAL_SERVER_ERROR, message: 'Internal Server Error' }
         }
+    }
+
+    async sendRecoverEmail(email: string): Promise<UserRepositoryResponse<string>> {
+        if(!email) return { error: true, code: ResponseCodes.BAD_REQUEST, message: 'Invalid email' };
+
+        const searchedUser = await this.findByEmail(email);
+        if( searchedUser.error ) return { error: true, code: ResponseCodes.NOT_FOUND, message: 'Email not found' };
+
+        return { error: false, code: ResponseCodes.OK, data: 'token' };
     }
 }

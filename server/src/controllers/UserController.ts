@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import ResponseCodes from '../interfaces/responseCodes';
 import { UserRegister } from '../interfaces/UserInterface';
 import UserManager from '../models/managers/UserManager';
+import jwt from 'jsonwebtoken';
 
 const userManager = new UserManager();
 
@@ -10,9 +11,9 @@ export default class UserController {
         try {
             const { email, password } = request.body;
 
-            const {data: session, code, error} = await userManager.createSession(email, password);
+            const {data: session, code, error, message} = await userManager.createSession(email, password);
 
-            if ( !session ) return response.status(code).json({ error });
+            if ( !session ) return response.status(code).json({ error, message });
 
             return response.status(code).json({ error, token: session });
         } catch(err) {
@@ -30,10 +31,22 @@ export default class UserController {
 
             if(createResponse.error) return response.status(createResponse.code).json({ error: createResponse.error, message: createResponse.message });
             
-            return response.status(ResponseCodes.CREATED).json({ error: false, token });
+            return response.status(createResponse.code).json({ error: createResponse.error, token });
         } catch(err) {
             console.log(err);
             return response.status(ResponseCodes.INTERNAL_SERVER_ERROR).json({ error: true, message: 'Internal Server Error' });
         }
+    }
+
+    async recoverPassword(request: Request, response: Response) {
+        const { token } = request.body;
+
+        const { email } = jwt.decode(token) as { email: string };
+
+        const codeResponse = await userManager.sendRecoverEmail(email);
+
+        if ( codeResponse.error ) return response.status(codeResponse.code).json({ error: codeResponse.error, message: codeResponse.message });
+
+        return response.status(codeResponse.code).json({ error: codeResponse.error, token: codeResponse.data });
     }
 }
