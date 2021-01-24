@@ -39,4 +39,14 @@ describe('user_repository', () => {
         expect(userResponse.data?.email).toBe('teste@email.com');
         expect(userResponse.code).toBe(ResponseCodes.OK);
     });
+
+
+
+    it('should not get an user by email if email is not registered', async () => {
+        const userResponse = await userRepository.getUserByEmail('teste@email.com');
+
+        expect(userResponse.data).toBeUndefined();
+        expect(userResponse.code).toBe(ResponseCodes.NOT_FOUND);
+        expect(userResponse.message).toBe('Email not found');
+    });
 });
