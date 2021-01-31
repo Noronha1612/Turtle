@@ -1,7 +1,6 @@
-import { UserGeneric, UserRegister } from "../../interfaces/UserInterface";
+import { UserGeneric, UserGenericOptional, UserGenericPossibilites, UserRegister } from "../../interfaces/UserInterface";
 import db from '../../database/connection';
 import ResponseCodes from "../../interfaces/responseCodes";
-import { response } from "express";
 
 export interface UserRepositoryResponse<T> {
     error: boolean;
@@ -20,7 +19,7 @@ export default class UserRepository {
     async getUserById(id: string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
-                .select(['user_id', 'first_name', 'last_name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
+                .select(['user_id', 'first_name', 'last_name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id', 'exp_recover_password'])
                 .where({ user_id: id })
                 .first<UserGeneric | undefined>();
 
@@ -36,7 +35,7 @@ export default class UserRepository {
     async getUserByEmail(email:string): Promise<UserRepositoryResponse<UserGeneric | undefined>> {
         try {
             const response = await db('users')
-                .select(['user_id', 'first_name', 'last_name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id'])
+                .select(['user_id', 'first_name', 'last_name', 'email', 'whatsapp', 'city', 'birthday', 'avatar_id', 'exp_recover_password'])
                 .where({ email })
                 .first<UserGeneric | undefined>();
 
@@ -87,5 +86,17 @@ export default class UserRepository {
             console.log(err);
             return { error: true, message: 'Internal Server Error', code: ResponseCodes.INTERNAL_SERVER_ERROR };
         }
+    }
+
+    async updateUser(data: UserGenericOptional): Promise<UserRepositoryResponse<undefined>> {
+        const filteredData = { ...data };
+
+        Object.keys(filteredData).forEach((key) => {
+            if(!filteredData[key as UserGenericPossibilites]) delete filteredData[key as UserGenericPossibilites];
+        });
+        
+        await db('users').update(filteredData);
+
+        return { code: ResponseCodes.OK, error: false };
     }
 }
