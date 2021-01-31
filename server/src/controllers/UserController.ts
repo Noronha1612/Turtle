@@ -41,7 +41,7 @@ export default class UserController {
     async recoverPassword(request: Request, response: Response) {
         const { token } = request.body;
 
-        const { email } = jwt.decode(token) as { email: string };
+        const { email } = jwt.decode(token) as { email?: string };
 
         const codeResponse = await userManager.sendRecoverEmail(email);
 
