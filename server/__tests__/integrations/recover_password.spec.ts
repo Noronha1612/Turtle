@@ -2,6 +2,9 @@ import truncate from '../utils/truncate'
 import request from 'supertest';
 import app from '../../src/app';
 import ResponseCodes from '../../src/interfaces/responseCodes';
+import generateToken from '../../src/utils/generateToken';
+import createUser from '../utils/createUser';
+import UserRepository from '../../src/models/repositories/UserRepository';
 
 describe('recover_password', () => {
     beforeEach(async () => {
@@ -15,14 +18,46 @@ describe('recover_password', () => {
 
 
     it('should not send email if email not registered', async () => {
+        const token = generateToken({
+            email: 'teste@email.com'
+        });
+
         const response = await request(app)
             .post('/recoverPassword')
             .send({
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJlbWFpbCI6ImluYy42OTFAaG90bWFpbC5jb20ifQ.n_U9KBMtPn1D7zDI3IRp7iLct3czcQStVCmc5QOpf_o',
+                token
         });
 
         expect(response.status).toBe(ResponseCodes.NOT_FOUND);
-        expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Email not found');
+        expect(response.body.error).toBe(true);
+    });
+
+
+
+    it('should not send email if has an token active', async () => {
+        await createUser({ email: 'teste@email.com' });
+
+        const token = generateToken({
+            email: 'teste@email.com'
+        });
+
+        await request(app)
+            .post('/recoverPassword')
+            .send({
+                token
+        });
+
+        const userRepository = new UserRepository();
+
+        const response = await request(app)
+            .post('/recoverPassword')
+            .send({
+                token
+        });
+
+        expect(response.status).toBe(ResponseCodes.FORBIDDEN);
+        expect(response.body.message).toBe('User has already an active token');
+        expect(response.body.error).toBe(true);
     });
 })
