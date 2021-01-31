@@ -89,14 +89,19 @@ export default class UserRepository {
     }
 
     async updateUser(data: UserGenericOptional): Promise<UserRepositoryResponse<undefined>> {
-        const filteredData = { ...data };
+        try {
+            const filteredData = { ...data };
 
-        Object.keys(filteredData).forEach((key) => {
-            if(!filteredData[key as UserGenericPossibilites]) delete filteredData[key as UserGenericPossibilites];
-        });
-        
-        await db('users').update(filteredData);
+            Object.keys(filteredData).forEach((key) => {
+                if(!filteredData[key as UserGenericPossibilites]) delete filteredData[key as UserGenericPossibilites];
+            });
+            
+            await db('users').update(filteredData);
 
-        return { code: ResponseCodes.OK, error: false };
+            return { code: ResponseCodes.OK, error: false };
+        } catch(err) {
+            console.log(err);
+            return { code: ResponseCodes.INTERNAL_SERVER_ERROR, error: true, message: 'Internal Server Error' };
+        }
     }
 }
