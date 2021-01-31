@@ -61,11 +61,16 @@ export default class UserManager {
         }
     }
 
-    async sendRecoverEmail(email: string): Promise<UserRepositoryResponse<string>> {
+    async sendRecoverEmail(email?: string): Promise<UserRepositoryResponse<string>> {
         if(!email) return { error: true, code: ResponseCodes.BAD_REQUEST, message: 'Invalid email' };
 
         const searchedUser = await this.findByEmail(email);
-        if( searchedUser.error ) return { error: true, code: ResponseCodes.NOT_FOUND, message: 'Email not found' };
+        if( searchedUser.error ) 
+            return { error: true, code: ResponseCodes.NOT_FOUND, message: 'Email not found' };
+        else if ( searchedUser.data?.exp_recover_password && Number(searchedUser.data.exp_recover_password) > Date.now() )
+            return { error: true, code: ResponseCodes.FORBIDDEN, message: 'User has already an active token' };
+
+        await userRepository.updateUser({ exp_recover_password: (Date.now() + (1000 * 60 * 60)).toString() });
 
         return { error: false, code: ResponseCodes.OK, data: 'token' };
     }
