@@ -11,6 +11,7 @@ export function up(knex: knex) {
         table.string('city').notNullable();
         table.date('birthday').notNullable();
         table.integer('avatar_id').notNullable();
+        table.timestamp('exp_recover_password');
     });
 }
 
